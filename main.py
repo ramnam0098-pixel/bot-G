@@ -3,8 +3,7 @@ from bot.notifier import send_discord_signal
 # Import your logic modules here
 # from bot.analysis import analyze_market 
 
-app = FastAPI()
-
+app = FastAPI(redirect_slashes=False)
 # 1. Health check for verifying server status
 @app.get("/")
 async def root():
