@@ -1,19 +1,33 @@
-import requests
+import httpx
+import asyncio
 
-url = "http://127.0.0.1:8000/webhook"
-payload = {
-    "passphrase": "MySecretBotPassword99!",
-    "ticker": "SOLUSDT",
-    "action": "BUY",
-    "price": 142.50,
-    "timeframe": "4h",
-    "strategy_name": "Institutional_Breakout_V5"
-}
+# Replace with your actual Render URL and Webhook Passphrase
+URL = "https://bot-g-s6ej.onrender.com"
+PASSPHRASE = "your_secret_passphrase"
 
-print("🚀 Launching validation payload to FastAPI gateway loop...")
-try:
-    response = requests.post(url, json=payload, timeout=15)
-    print(f"📡 Gateway HTTP Response Status: {response.status_code}")
-    print(f"📦 Response JSON Content Summary:\n{response.json()}")
-except Exception as e:
-    print(f"❌ Testing sequence broke down due to communication issue: {e}")
+async def test_webhook():
+    payload = {
+        "passphrase": PASSPHRASE,
+        "symbol": "BTC/USDT",
+        "side": "buy",
+        "price": 65000.00
+    }
+
+    print(f"Sending signal to: {URL}")
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(URL, json=payload, timeout=10.0)
+            
+            if response.status_code == 200:
+                print("Success! Signal received by server.")
+                print("Response:", response.json())
+            else:
+                print(f"Failed. Status Code: {response.status_code}")
+                print("Response:", response.text)
+                
+    except Exception as e:
+        print(f"Error connecting to server: {e}")
+
+if __name__ == "__main__":
+    asyncio.run(test_webhook())
