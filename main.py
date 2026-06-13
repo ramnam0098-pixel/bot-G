@@ -1,28 +1,22 @@
+import os
 from fastapi import FastAPI, Request, HTTPException
-from bot.notifier import send_discord_signal
-# Import your logic modules here
-# from bot.analysis import analyze_market 
 
-app = FastAPI(redirect_slashes=False)
-# 1. Health check for verifying server status
+app = FastAPI(redirect_slashes=True) # Re-enabling to handle common user errors
+
 @app.get("/")
 async def root():
-    return {"status": "online", "message": "Gateway active"}
+    return {"status": "online"}
 
-# 2. Webhook endpoint
 @app.post("/webhook")
+@app.post("/webhook/")
 async def handle_webhook(request: Request):
-    data = await request.json()
+    # Retrieve body for debugging
+    body = await request.json()
     
-    # Simple passphrase validation
-    # Ensure WEBHOOK_PASSPHRASE is set in Render Environment Variables
-    import os
+    # Validate passphrase
     expected_pass = os.getenv("WEBHOOK_PASSPHRASE")
-    
-    if data.get("passphrase") != expected_pass:
+    if body.get("passphrase") != expected_pass:
         raise HTTPException(status_code=403, detail="Unauthorized")
     
-    # Process your bot logic here
-    # Example: send_discord_signal(data)
-    
-    return {"status": "received", "data": data}
+    print(f"Received request: {body}")
+    return {"status": "success"}
