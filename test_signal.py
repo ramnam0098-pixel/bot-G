@@ -2,7 +2,7 @@ import httpx
 import asyncio
 
 URL = "https://bot-g-s6ej.onrender.com/webhook"
-PASSPHRASE = "your_secret_passphrase" # Must match Render Environment Variable
+PASSPHRASE = "MySecretBotPassword99!" # Must match Render Environment Variable
 
 async def send_test():
     payload = {
