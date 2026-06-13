@@ -1,22 +1,28 @@
 import os
+import httpx
 from fastapi import FastAPI, Request, HTTPException
 
-app = FastAPI(redirect_slashes=True) # Re-enabling to handle common user errors
+app = FastAPI()
 
-@app.get("/")
-async def root():
-    return {"status": "online"}
+async def send_discord(message: str):
+    webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+    if not webhook_url:
+        print("Error: DISCORD_WEBHOOK_URL not set")
+        return
+    async with httpx.AsyncClient() as client:
+        await client.post(webhook_url, json={"content": message})
 
 @app.post("/webhook")
 @app.post("/webhook/")
 async def handle_webhook(request: Request):
-    # Retrieve body for debugging
-    body = await request.json()
+    data = await request.json()
     
-    # Validate passphrase
-    expected_pass = os.getenv("WEBHOOK_PASSPHRASE")
-    if body.get("passphrase") != expected_pass:
+    # 1. Auth Validation
+    if data.get("passphrase") != os.getenv("WEBHOOK_PASSPHRASE"):
         raise HTTPException(status_code=403, detail="Unauthorized")
     
-    print(f"Received request: {body}")
+    # 2. Process Discord Alert
+    msg = f"Alert: {data.get('side')} {data.get('symbol')} at {data.get('price')}"
+    await send_discord(msg)
+    
     return {"status": "success"}
