@@ -2,7 +2,7 @@ import httpx
 import asyncio
 
 # Replace with your actual Render URL and Webhook Passphrase
-URL = "https://bot-g-s6ej.onrender.com"
+URL = "https://bot-g-s6ej.onrender.com/webhook/"
 PASSPHRASE = "your_secret_passphrase"
 
 async def test_webhook():
