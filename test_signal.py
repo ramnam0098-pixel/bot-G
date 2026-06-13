@@ -3,7 +3,7 @@ import asyncio
 
 # Replace with your actual Render URL and Webhook Passphrase
 URL = "https://bot-g-s6ej.onrender.com/webhook"
-PASSPHRASE = "your_secret_passphrase"
+PASSPHRASE = "MySecretBotPassword99!"
 
 async def test_webhook():
     payload = {
